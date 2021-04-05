@@ -12,6 +12,8 @@ Clone the repository and create the 'visualgpt' conda environmnet
 
 
 Please cite our paper from the following bibtex
+
+
 '''
 @article{chen2021visualgpt,
   title={VisualGPT: Data-efficient Image Captioning by Balancing Visual Input and Linguistic Knowledge from Pretraining},
