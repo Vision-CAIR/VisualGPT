@@ -5,3 +5,4 @@ Our Paper [VisualGPT: Data-efficient Adaptation of Pretrained Language Models fo
 ## Main Architecture of Our VisualGPT
 <embed src="images/architecture.pdf" type="application/pdf">
 
+<object data="images/architecture.pdf" type="application/pdf" width="100%">  </object>
