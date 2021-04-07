@@ -1,3 +1,4 @@
+
 # VisualGPT
 
 Our Paper [VisualGPT: Data-efficient Adaptation of Pretrained Language Models for Image Captioning](https://arxiv.org/abs/2102.10407)
@@ -5,6 +6,7 @@ Our Paper [VisualGPT: Data-efficient Adaptation of Pretrained Language Models fo
 ## Main Architecture of Our VisualGPT
 ![image](images/final_architecture.jpg)
 
+# will update our environment configuration and training details soon!
 ## Enviroment setup
 Clone the repository and create the `visualgpt` conda environmnet
 
