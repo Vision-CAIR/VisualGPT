@@ -171,36 +171,16 @@ def train_scst(model, dataloader, cider, text_field,gpt_optimizer,args):
     return loss, reward, reward_baseline
 
 
-def get_linear_schedule_with_warmup(optimizer, num_warmup_steps, num_training_steps, last_epoch=-1):
-
-
-    def lr_lambda(current_step: int):
-        if current_step < num_warmup_steps:
-            return float(current_step) / float(max(1, num_warmup_steps))
-        return max(
-            0.0, float(num_training_steps - current_step) / float(max(1, num_training_steps - num_warmup_steps))
-        )
-
-    return LambdaLR(optimizer, lr_lambda, last_epoch)
-
-def get_lr(optimizer):
-    learning_rate=[]
-    for param_group in optimizer.param_groups:
-        learning_rate.append(param_group["lr"])
-
-    return learning_rate
-
 
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description='VisualGPT')
     parser.add_argument('--exp_name', type=str, default='visualGPT')
-    parser.add_argument('--batch_size', type=int, default=400)
+    parser.add_argument('--batch_size', type=int, default=50)
     parser.add_argument("--eval_batch_size", default=32, type=int,
                         help="Total batch size for eval.")
     parser.add_argument('--workers', type=int, default=5)
     parser.add_argument('--head', type=int, default=12)
-    parser.add_argument('--warmup', type=int, default=10000)
     parser.add_argument('--resume_last', action='store_true')
     parser.add_argument('--resume_best', action='store_true')
     parser.add_argument('--features_path', type=str)
@@ -213,24 +193,20 @@ if __name__ == '__main__':
     parser.add_argument('--gradient_accumulation_steps', type=int, default=1,
                         help="Number of updates steps to accumulate before performing a backward/update pass.")
 
-    parser.add_argument("--warmup_proportion", default=0.1, type=float,
-                        help="Proportion of training to perform linear learning rate warmup for. "
-                             "E.g., 0.1 = 10%% of training.")
+
     parser.add_argument("--num_train_epochs", default=3.0, type=float,
                         help="Total number of training epochs to perform.")
 
     parser.add_argument('--optimizer_type', type= str, default = "adamw")
     parser.add_argument('--max_grad_norm', default=1.0, type = float)
-    parser.add_argument('--finetuning',action="store_true")
     parser.add_argument('--train_percentage', default=1.0, type = float)
     parser.add_argument('--split_train_data', action="store_true")
-    parser.add_argument('--fix_gpt_parameters', action="store_true")
     parser.add_argument('--encoder_lr',type = float, default = 1e-4)
     parser.add_argument('--decoder_lr',type = float, default=1e-5)
     parser.add_argument('--reinforcement_lr',type = float, default=1e-5)
     parser.add_argument("--decoder_layer", type= int, default = 12)
     parser.add_argument("--encoder_layer",type=int, default=3)
-
+    parser.add_argument("--tau",type=float, default = 0.0)
 
     args = parser.parse_args()
 
@@ -239,7 +215,7 @@ if __name__ == '__main__':
         raise ValueError("Invalid gradient_accumulation_steps parameter: {}, should be >= 1".format(
                             args.gradient_accumulation_steps))
     args.batch_size = args.batch_size // args.gradient_accumulation_steps
-
+    
 
 
     os.environ["TOKENIZERS_PARALLELISM"] = "True"
@@ -284,7 +260,7 @@ if __name__ == '__main__':
 
     # Model and dataloaders
     encoder = VisualEncoder(args.encoder_layer, 0, attention_module=ScaledDotProductAttention)
-    model = Transformer_visualgpt(text_field.vocab.stoi['<?'], encoder, args.gpt_model_type, args.decoder_layer).to(device)
+    model = Transformer_visualgpt(text_field.vocab.stoi['<?'], encoder, args.gpt_model_type, args.decoder_layer,tau=args.tau).to(device)
 
     dict_dataset_train = train_dataset.image_dictionary({'image': image_field, 'text': RawField()})
 
@@ -300,13 +276,6 @@ if __name__ == '__main__':
 
 
     total_step_number = int(len(train_dataset)/(args.batch_size * args.gradient_accumulation_steps)*100)
-    args.warmup = int(len(train_dataset)/(args.batch_size * args.gradient_accumulation_steps))
-    no_decay = ['bias', 'LayerNorm.weight']
-    optimizer_grouped_parameters = [
-        {'params': [p for n, p in model.named_parameters() if not any(nd in n for nd in no_decay)],
-         'weight_decay': 0.01},
-        {'params': [p for n, p in model.named_parameters() if any(nd in n for nd in no_decay)], 'weight_decay': 0.0}
-    ]
  
 
     if args.optimizer_type =="adamw":
@@ -423,13 +392,13 @@ if __name__ == '__main__':
                 switch_to_rl = True
                 patience = 0
 
-                no_decay = ['bias', 'LayerNorm.weight']
-                optimizer_grouped_parameters = [
-                    {'params': [p for n, p in model.named_parameters() if not any(nd in n for nd in no_decay)],
-                     'weight_decay': 0.01},
-                    {'params': [p for n, p in model.named_parameters() if any(nd in n for nd in no_decay)],
-                     'weight_decay': 0.0}
-                ]
+                # no_decay = ['bias', 'LayerNorm.weight']
+                # optimizer_grouped_parameters = [
+                #     {'params': [p for n, p in model.named_parameters() if not any(nd in n for nd in no_decay)],
+                #      'weight_decay': 0.01},
+                #     {'params': [p for n, p in model.named_parameters() if any(nd in n for nd in no_decay)],
+                #      'weight_decay': 0.0}
+                # ]
 
 
                 gpt_optimizer = AdamW(model.parameters(),
