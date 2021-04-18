@@ -235,7 +235,6 @@ class Block(Module):
         self.enc_dec_attn = Enc_Dec_Attention(nx,n_ctx,config,scale)
         self.ln_2 = LayerNorm(nx, eps=config.layer_norm_epsilon)
         self.mlp = MLP(4 * nx, config)
-
         self.resid_pdrop= nn.Dropout(config.resid_pdrop)
 
 
@@ -245,7 +244,7 @@ class Block(Module):
         self.fc_alpha3 = nn.Linear(nx + nx, nx)
 
 
-    def forward(self, x, layer_past=None,mask_queries=None,encoder_output=None,mask_encoder=None, mask_self_attention=None, tau=0):
+    def forward(self, x, layer_past=None,mask_queries=None,encoder_output=None,mask_encoder=None, mask_self_attention=None, tau = 0):
         threshold = tau
 
         self_attention, present = self.attn(self.ln_1(x), layer_past=layer_past,
@@ -313,7 +312,7 @@ class GPT2Model(Module):
         self.decoder = nn.Linear(embed_shape[1], embed_shape[0], bias=False)
         self.decoder.weight = model_embeddings_weights  # Tied weights
 
-    def forward(self, input_ids, position_ids=None, token_type_ids=None, past=None,mask_queries=None,encoder_output=None,mask_encoder=None, mask_self_attention = None):
+    def forward(self, input_ids, position_ids=None, token_type_ids=None, past=None,mask_queries=None,encoder_output=None,mask_encoder=None, mask_self_attention = None, tau = 0):
 
 
         if past is None:
@@ -340,10 +339,9 @@ class GPT2Model(Module):
         hidden_states = inputs_embeds + position_embeds + token_type_embeds
         presents = []
 
-        iteration_index=0
+
         for block, layer_past in zip(self.h, past):
-            iteration_index+=1
-            hidden_states, present = block(hidden_states, layer_past,mask_queries = mask_queries,encoder_output=encoder_output,mask_encoder=mask_encoder, mask_self_attention= mask_self_attention, iteration=iteration_index)
+            hidden_states, present = block(hidden_states, layer_past,mask_queries = mask_queries,encoder_output=encoder_output,mask_encoder=mask_encoder, mask_self_attention= mask_self_attention, tau = tau)
             presents.append(present)
         hidden_states = self.ln_f(hidden_states)
         output_shape = input_shape + (hidden_states.size(-1),)
@@ -368,14 +366,14 @@ class GPT2LMHead(Module):
 
 
 class GPT2LMHeadModel(Module):
-    def __init__(self, config,padding_idx =47932):
+    def __init__(self, config,padding_idx =47932, tau = 0):
         super(GPT2LMHeadModel, self).__init__()
         self.transformer = GPT2Model(config)
         self.lm_head = GPT2LMHead(self.transformer.wte.weight, config)
         self.padding_idx = padding_idx
 
         self.register_state('running_mask_self_attention', torch.zeros((1, 1, 0)).bool())
-
+        self.tau = tau
 
 
 
@@ -400,7 +398,7 @@ class GPT2LMHeadModel(Module):
 
 
 
-        hidden_states, presents = self.transformer(input_ids, position_ids, token_type_ids, past,mask_queries=mask_queries,encoder_output=encoder_output,mask_encoder=mask_encoder, mask_self_attention= mask_self_attention)
+        hidden_states, presents = self.transformer(input_ids, position_ids, token_type_ids, past,mask_queries=mask_queries,encoder_output=encoder_output,mask_encoder=mask_encoder, mask_self_attention= mask_self_attention, tau = self.tau)
         lm_logits = self.lm_head(hidden_states)
         if lm_labels is not None:
             loss_fct = nn.CrossEntropyLoss(ignore_index=-1)

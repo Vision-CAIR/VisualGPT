@@ -14,7 +14,7 @@ state_dict = torch.load('gpt2-pytorch_model.bin', map_location='cpu' if not torc
 
 class Transformer_visualgpt(CaptioningModel):
 
-    def __init__(self, bos_idx, encoder, gpt2_type, fix_gpt_parameters,n_layer=12):
+    def __init__(self, bos_idx, encoder, gpt2_type,n_layer=12,tau=0):
         super(Transformer_m2_balaced_attention, self).__init__()
         self.bos_idx = bos_idx
         self.encoder = encoder
@@ -25,9 +25,7 @@ class Transformer_visualgpt(CaptioningModel):
 
             config = GPT2Config()
             config.n_layer = n_layer
-
-
-            decoder= GPT2LMHeadModel(config)
+            decoder= GPT2LMHeadModel(config, tau=tau)
 
             self.decoder = decoder
 
@@ -35,33 +33,10 @@ class Transformer_visualgpt(CaptioningModel):
 
             config = GPT2Config()
             config.n_layer = n_layer
-
-            decoder = GPT2LMHeadModel(config)
-
+            decoder = GPT2LMHeadModel(config,tau=tau)
 
             decoder = load_weight(decoder, state_dict)
-            
-
-            if fix_gpt_parameters:
-                for p in decoder.transformer.h:
-                    for param in p.parameters():
-                        param.requires_grad= False
-
-                for p in decoder.transformer.h:
-                    for param in p.enc_dec_attn.parameters():
-                        param.requires_grad =True
-
-                for p in decoder.transformer.h:
-                    for param in p.fc_alpha1.parameters():
-                        param.requires_grad = True
-                    for param in p.fc_alpha2.parameters():
-                        param.requires_grad = True
-                
-                    for param in p.fc_alpha3.parameters():
-                        param.requires_grad = True
                         
-
-
             self.decoder = decoder
 
 
@@ -89,8 +64,6 @@ class Transformer_visualgpt(CaptioningModel):
 
     def forward(self, images, seq, *args):
         enc_output, mask_enc = self.encoder(images)
-        # with torch.no_grad():
-        # dec_output = self.decoder(input_ids = seq, encoder_output = enc_output,mask_encoder= mask_enc)
 
         dec_output,past = self.decoder(seq, enc_output, mask_enc)
         return dec_output,past

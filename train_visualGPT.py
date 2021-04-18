@@ -280,6 +280,8 @@ if __name__ == '__main__':
     else:
         text_field.vocab = pickle.load(open('vocab_%s.pkl' % args.exp_name, 'rb'))
 
+
+
     # Model and dataloaders
     encoder = VisualEncoder(args.encoder_layer, 0, attention_module=ScaledDotProductAttention)
     model = Transformer_visualgpt(text_field.vocab.stoi['<?'], encoder, args.gpt_model_type, args.decoder_layer).to(device)
