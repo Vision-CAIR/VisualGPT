@@ -9,8 +9,9 @@ Our Paper [VisualGPT: Data-efficient Adaptation of Pretrained Language Models fo
 # will update our environment configuration and training details soon!
 
 ## Download the GPT-2 pretrained weights
+```
 curl --output gpt2-pytorch_model.bin https://s3.amazonaws.com/models.huggingface.co/bert/gpt2-pytorch_model.bin
-
+```
 
 ## Enviroment setup
 Clone the repository and create the `visualgpt` conda environmnet
