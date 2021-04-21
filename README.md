@@ -6,7 +6,6 @@ Our Paper [VisualGPT: Data-efficient Adaptation of Pretrained Language Models fo
 ## Main Architecture of Our VisualGPT
 ![image](images/final_architecture.jpg)
 
-# will update our environment configuration and training details soon! The code clean up will be finished soon!
 
 ## Download the GPT-2 pretrained weights
 ```
