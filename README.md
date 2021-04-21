@@ -47,7 +47,7 @@ python train_visualGPT.py --batch_size 50 --head 12 --features_path coco_detecti
 
 
 ## Acknowledgement
-This code used resources from [Meshed Memory Transformer](https://github.com/aimagelab/meshed-memory-transformer) and [Transformers from Hugging Face](https://github.com/huggingface/transformers)
+This code used resources from [Meshed Memory Transformer](https://github.com/aimagelab/meshed-memory-transformer) and [Transformers](https://github.com/huggingface/transformers)
 
 
 
