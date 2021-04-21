@@ -201,8 +201,6 @@ if __name__ == '__main__':
     parser.add_argument('--max_grad_norm', default=1.0, type = float)
     parser.add_argument('--train_percentage', default=1.0, type = float)
     parser.add_argument('--split_train_data', action="store_true")
-    parser.add_argument('--encoder_lr',type = float, default = 1e-4)
-    parser.add_argument('--decoder_lr',type = float, default=1e-5)
     parser.add_argument('--reinforcement_lr',type = float, default=1e-5)
     parser.add_argument("--decoder_layer", type= int, default = 12)
     parser.add_argument("--encoder_layer",type=int, default=3)
@@ -391,14 +389,6 @@ if __name__ == '__main__':
                 use_rl = True
                 switch_to_rl = True
                 patience = 0
-
-                # no_decay = ['bias', 'LayerNorm.weight']
-                # optimizer_grouped_parameters = [
-                #     {'params': [p for n, p in model.named_parameters() if not any(nd in n for nd in no_decay)],
-                #      'weight_decay': 0.01},
-                #     {'params': [p for n, p in model.named_parameters() if any(nd in n for nd in no_decay)],
-                #      'weight_decay': 0.0}
-                # ]
 
 
                 gpt_optimizer = AdamW(model.parameters(),

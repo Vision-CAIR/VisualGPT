@@ -15,7 +15,7 @@ state_dict = torch.load('gpt2-pytorch_model.bin', map_location='cpu' if not torc
 class Transformer_visualgpt(CaptioningModel):
 
     def __init__(self, bos_idx, encoder, gpt2_type,n_layer=12,tau=0):
-        super(Transformer_m2_balaced_attention, self).__init__()
+        super(Transformer_visualgpt, self).__init__()
         self.bos_idx = bos_idx
         self.encoder = encoder
         self.gpt2_type = gpt2_type

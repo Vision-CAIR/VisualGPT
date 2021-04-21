@@ -17,6 +17,34 @@ curl --output gpt2-pytorch_model.bin https://s3.amazonaws.com/models.huggingface
 Clone the repository and create the `visualgpt` conda environmnet
 
 
+```
+conda env create -f environment.yml
+conda activate visualgpt
+```
+
+Then download spacy data
+
+```
+python -m spacy download en
+```
+
+## Data preparation
+We provide the COCO dataset for downloading. Please download the annotations file [annotations.zip](https://drive.google.com/file/d/1i8mqKFKhqvBr8kEp3DbIh9-9UNAfKGmE/view?usp=sharing) and extract it.
+and [coco_detections.hdf5](https://drive.google.com/open?id=1MV6dSnqViQfyvgyHrmAT_lLpFbkzp3mx), in which the data is stored in a `<key, value>` where key is the image id and value is a tensor (N, 2048). N it the number of detections
+
+## code structure
+
+
+
+
+create the log folder ``mkdir logs`` and start the training
+
+## Train the model
+```
+python train_visualGPT.py --batch_size 50 --head 12 --features_path coco_detections.hdf5 --annotation_folder annotations --lr 1e-4 --gpt_model_type gpt --random_seed 42 --log_file logs/log --exp_name experiment_log --lr 1e-4 --decoder_layer 12 --optimizer_type adamw  --gradient_accumulation_steps 2 --train_percentage 0.001 --split_train_data
+```
+
+
 
 
 Please cite our paper from the following bibtex

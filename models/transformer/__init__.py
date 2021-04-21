@@ -1,4 +1,3 @@
-from .transformer import Transformer
 from .encoders import *
 from .attention import *
 
