@@ -59,4 +59,12 @@ Please cite our paper from the following bibtex
   journal={arXiv preprint arXiv:2102.10407},
   year={2021}
 }
+
+@article{chen2021visualgpt,
+  title={VisualGPT: Data-efficient Adaptation of Pretrained Language Models for Image Captioning},
+  author={Chen, Jun and Guo, Han and Yi, Kai and Li, Boyang and Elhoseiny, Mohamed},
+  journal={arXiv preprint arXiv:2102.10407},
+  year={2021}
+}
+
 ```
