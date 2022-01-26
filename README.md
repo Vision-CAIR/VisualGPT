@@ -40,7 +40,7 @@ create the log folder ``mkdir logs`` and start the training
 
 ## Train the model
 ```
-python train_visualGPT.py --batch_size 50 --head 12 --features_path coco_detections.hdf5 --annotation_folder annotations --lr 1e-4 --gpt_model_type gpt --random_seed 42 --log_file logs/log --exp_name experiment_log --lr 1e-4 --decoder_layer 12 --optimizer_type adamw  --gradient_accumulation_steps 2 --train_percentage 0.001 --split_train_data
+python train_visualGPT.py --batch_size 50 --head 12 --tau 0.2 --features_path coco_detections.hdf5 --annotation_folder annotations --lr 1e-4 --gpt_model_type gpt --random_seed 42 --log_file logs/log --exp_name experiment_log --lr 1e-4 --decoder_layer 12 --optimizer_type adamw  --gradient_accumulation_steps 2 --train_percentage 0.001 --split_train_data
 ```
 
 
