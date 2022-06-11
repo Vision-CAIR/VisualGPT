@@ -53,11 +53,13 @@ This code used resources from [Meshed Memory Transformer](https://github.com/aim
 Please cite our paper from the following bibtex
 
 ```
-@inproceedings{chen2021visualgpt,
-  title={VisualGPT: Data-efficient Image Captioning by Balancing Visual Input and Linguistic Knowledge from Pretraining},
-  author={Chen, Jun and Guo, Han and Yi, Kai and Li, Boyang and Elhoseiny, Mohamed},
-  booktitle={CVPR 2022},
-  year={2022}
+@@InProceedings{Chen_2022_CVPR,
+    author    = {Chen, Jun and Guo, Han and Yi, Kai and Li, Boyang and Elhoseiny, Mohamed},
+    title     = {VisualGPT: Data-Efficient Adaptation of Pretrained Language Models for Image Captioning},
+    booktitle = {Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)},
+    month     = {June},
+    year      = {2022},
+    pages     = {18030-18040}
 }
 
 
